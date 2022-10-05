@@ -4,17 +4,9 @@ jobs:
   build:
     docker:
       - image: cimg/base:2022.03
+    parallelism: 2
     steps:
       - checkout
-      - run:
-          name: "'run' statements can actually contain a 'name' and 'command' argument as well"
-          command: |
-            echo "You can even have multiline commands."
-      - restore_cache:
-          keys:
-            - v1-dependencies-
-      - run: mkdir ~/cache/
-      - run: echo "testfile" > ~/cache/log.txt
       - save_cache:
           key: v1-dependencies-
           paths: ~/cache
