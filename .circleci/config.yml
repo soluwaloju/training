@@ -10,14 +10,15 @@ jobs:
       - save_cache:
           key: v1-dependencies-
           paths: ~/cache
-      - run:
-          name: Run Hello test
-          command: |
-            bash src/test_hello.sh
-      - run:
-          name: Run Goodbye test
-          command: |
-            bash src/test_goodbye.sh
+#      - run:
+#          name: Run Hello test
+#          command: |
+#            bash src/test_hello.sh
+#      - run:
+#          name: Run Goodbye test
+#          command: |
+#            bash src/test_goodbye.sh
+      - run: circleci tests glob "**/*.sh" | circleci tests split --split-by=filesize
 
 workflows:
   build-workflow:
