@@ -6,7 +6,7 @@ jobs:
     parameters:
       run_test:
         type: boolean
-    working_directory: /tmp
+    working_directory: /test
     docker:
       - image: cimg/base:2022.03
     steps:
@@ -15,9 +15,9 @@ jobs:
           name: Run test
           command: |
             bash src/test.sh
-            echo "test artifact file" > /tmp/artifact
+            echo "test artifact file" > /test/artifact
       - store_artifacts:
-          path: /tmp/artifact
+          path: /test/artifact
           destination: artifact-file
 
   build-hello:
