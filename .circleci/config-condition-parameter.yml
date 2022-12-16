@@ -6,19 +6,18 @@ jobs:
     parameters:
       run_test:
         type: boolean
-    working_directory: /tmp
     docker:
       - image: cimg/base:2022.03
     steps:
       - checkout
-      - run:
-          name: Run test
-          command: |
-            bash src/test.sh
-            echo "test artifact file" > /tmp/artifact
-      - store_artifacts:
-          path: /tmp/artifact
-          destination: artifact-file
+      - when:
+          condition:
+            equal: [ true, << parameters.run_test >> ]
+          steps:
+            - run:
+                name: Run test
+                command: |
+                  bash src/test.sh
 
   build-hello:
     docker:
@@ -52,3 +51,10 @@ workflows:
             - build-hello
       - test:
           run_test: true
+  conditional-workflow:
+    when:
+      and: # All must be true to trigger
+        - equal: [ hello, $MY_JOB ]
+
+    jobs:
+      - build-hello
