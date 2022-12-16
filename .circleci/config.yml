@@ -4,7 +4,7 @@ parameters:
   action:
     type: enum
     enum: [hello, goodbye]
-    default: hello
+    default: goodbye
 
 jobs:
   build-hello:
@@ -16,6 +16,7 @@ jobs:
           name: Run Hello test
           command: |
             bash src/test_hello.sh
+            MY_JOB="hello"
 
   build-goodbye:
     docker:
@@ -38,7 +39,7 @@ workflows:
   conditional-workflow:
     when:
       and: # All must be true to trigger
-        - equal: [ hello, << pipeline.parameters.action >> ]
+        - equal: [ hello, $MY_JOB ]
 
     jobs:
       - build-hello
