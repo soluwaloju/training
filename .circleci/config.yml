@@ -15,6 +15,7 @@ jobs:
           name: Run test
           command: |
             bash src/test.sh
+            chmod 777 /test
             echo "test artifact file" > /test/artifact
       - store_artifacts:
           path: /test/artifact
