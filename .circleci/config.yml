@@ -10,10 +10,6 @@ jobs:
           name: Run Hello test
           command: |
             bash src/test_hello.sh
-      - run:
-          name: Run Goodbye test
-          command: |
-            bash src/test_goodbye.sh
 
   build-goodbye:
     docker:
@@ -24,8 +20,11 @@ jobs:
           name: Run Hello test
           command: |
             bash src/test_hello.sh
-      - run: circleci tests glob "**/*.sh" | circleci tests split --split-by=filesize
+
 workflows:
   build-workflow:
     jobs:
-      - build
+      - build-hello
+      - build-goodbye:
+        requires:
+          - build-hello
