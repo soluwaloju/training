@@ -1,5 +1,11 @@
 version: 2.1
 
+parameters:
+  action:
+    type: enum
+    enum: [hello, goodbye]
+    default: hello
+
 jobs:
   build-hello:
     docker:
@@ -28,3 +34,11 @@ workflows:
       - build-goodbye:
           requires:
             - build-hello
+
+  conditional-workflow:
+    when:
+      and: # All must be true to trigger
+        - equal: [ hello, << pipeline.parameters.action >> ]
+
+    jobs:
+      - build-hello
