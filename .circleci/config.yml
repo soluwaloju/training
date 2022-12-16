@@ -44,7 +44,7 @@ jobs:
     steps:
       - checkout
       - when:
-          condition: $CIRCLE_PULL_REQUEST
+          condition: $CIRCLE_PULL_REQUEST != ""
           steps:
             - run:
                 name: Run Hello test
