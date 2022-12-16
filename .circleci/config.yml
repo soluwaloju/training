@@ -26,15 +26,32 @@ jobs:
       MY_JOB: hello
     steps:
       - checkout
-      - run:
-          name: Run Hello test
-          command: |
-            env
-            echo $CIRCLE_PULL_REQUEST
-            echo $CIRCLE_IS_PR
-            echo $CI_PULL_REQUEST
-            bash src/test_hello.sh
-            MY_JOB="hello"
+      - when:
+          condition: $CIRCLE_PULL_REQUEST
+          steps:
+            - run:
+                name: Run Hello test
+                command: |
+                  echo $CIRCLE_PULL_REQUEST
+                  bash src/test_hello.sh
+                  MY_JOB="hello"
+
+  build-hello-pr:
+    docker:
+      - image: cimg/base:2022.03
+    environment:
+      MY_JOB: hello
+    steps:
+      - checkout
+      - when:
+          condition: $CIRCLE_PULL_REQUEST
+          steps:
+            - run:
+                name: Run Hello test
+                command: |
+                  echo $CIRCLE_PULL_REQUEST
+                  bash src/test_hello.sh
+                  MY_JOB="hello"
 
   build-goodbye:
     docker:
