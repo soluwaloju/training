@@ -29,6 +29,7 @@ jobs:
       - run:
           name: Run Hello test
           command: |
+            echo $CIRCLE_PULL_REQUEST
             bash src/test_hello.sh
             MY_JOB="hello"
 
