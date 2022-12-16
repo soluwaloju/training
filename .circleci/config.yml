@@ -30,7 +30,7 @@ jobs:
           name: Run Hello test
           command: |
             env
-            echo $CIRCLE_PR_NUMBER
+            echo $CIRCLE_PULL_REQUEST
             echo $CIRCLE_IS_PR
             echo $CI_PULL_REQUEST
             bash src/test_hello.sh
