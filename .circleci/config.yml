@@ -10,6 +10,8 @@ jobs:
   build-hello:
     docker:
       - image: cimg/base:2022.03
+    environment:
+      MY_JOB: hello
     steps:
       - checkout
       - run:
