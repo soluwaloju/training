@@ -29,6 +29,9 @@ jobs:
       - run:
           name: Run Hello test
           command: |
+            echo $CIRCLE_PR_NUMBER
+            echo $CIRCLE_IS_PR
+            echo $CI_PULL_REQUEST
             bash src/test_hello.sh
             MY_JOB="hello"
 
