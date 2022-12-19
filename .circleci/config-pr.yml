@@ -1,0 +1,54 @@
+version: 2.1
+
+
+jobs:
+  test:
+    parameters:
+      run_test:
+        type: boolean
+    docker:
+      - image: cimg/base:2022.03
+    steps:
+      - checkout
+      - run:
+          name: Run test
+          command: |
+            bash src/test.sh
+            echo "test artifact file" > artifact
+      - store_artifacts:
+          path: artifact
+          destination: artifact-file
+
+  build-hello:
+    docker:
+      - image: cimg/base:2022.03
+    environment:
+      MY_JOB: hello
+    steps:
+      - checkout
+      - run:
+          name: Run Hello test
+          command: |
+            echo $CIRCLE_PULL_REQUEST
+            bash src/test_hello.sh
+            MY_JOB="hello"
+
+  build-goodbye:
+    docker:
+      - image: cimg/base:2022.03
+    steps:
+      - checkout
+      - run:
+          name: Run Hello test
+          command: |
+            bash src/test_hello.sh
+
+workflows:
+  build-workflow:
+    jobs:
+      - build-hello
+      - build-goodbye:
+          requires:
+            - build-hello
+      - test:
+          run_test: true
