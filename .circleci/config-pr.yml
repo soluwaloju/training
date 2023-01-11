@@ -7,7 +7,7 @@ jobs:
       run_test:
         type: boolean
     docker:
-      - image: cimg/base:2022.03
+      - image: cimg/base:volatile
     steps:
       - checkout
       - run:
