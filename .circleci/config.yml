@@ -47,6 +47,7 @@ jobs:
 workflows:
   build-workflow:
     jobs:
+      - notify
       - test
       - request-build:
           type: approval
