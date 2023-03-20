@@ -1,58 +1,48 @@
 version: 2.1
 
-orbs:
-  slack: circleci/slack@volatile
-jobs:
-  notify:
+executors:
+  my-executor:
     docker:
-      - image: 'cimg/base:stable'
-    steps:
-      - slack/notify:
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "plain_text",
-                      "text": "*This is a text notification*",
-                      "emoji": true
-                    }
-                  ]
-                }
-              ]
-            }
-          event: always
-  test:
-    docker:
-      - image: cimg/base:2022.03
-    steps:
-      - checkout
-      - run:
-          name: Run test
-          command: |
-            bash src/test.sh
+      - image: buildpack-deps:jessie
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+    working_directory: /tmp
 
-  build-hello:
-    docker:
-      - image: cimg/base:2022.03
+jobs:
+  flow:
+    executor: my-executor
     steps:
-      - checkout
-      - run:
-          name: Run Hello test
-          command: |
-            bash src/test_hello.sh
+      - run: mkdir -p workspace
+      - run: echo "Hello, world!" > workspace/echo-output
+
+      # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job.
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
+          # taken to be the root directory of the workspace.
+          root: workspace
+          # Must be relative path from root
+          paths:
+            - echo-output
+
+  downstream:
+    executor: my-executor
+    steps:
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: /tmp/workspace
+
+      - run: |
+          if [[ `cat /tmp/workspace/echo-output` == "Hello, world!" ]]; then
+            echo "It worked!";
+          else
+            echo "Nope!"; exit 1
+          fi
 
 workflows:
-  build-workflow:
+  btd:
     jobs:
-      - notify
-      - test
-      - request-build:
-          type: approval
+      - flow
+      - downstream:
           requires:
-            - test
-      - build-hello:
-          requires:
-            - request-build
+            - flow

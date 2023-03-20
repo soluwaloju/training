@@ -1,0 +1,58 @@
+version: 2.1
+
+orbs:
+  slack: circleci/slack@volatile
+jobs:
+  notify:
+    docker:
+      - image: 'cimg/base:stable'
+    steps:
+      - slack/notify:
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "*This is a text notification*",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+          event: always
+  test:
+    docker:
+      - image: cimg/base:2022.03
+    steps:
+      - checkout
+      - run:
+          name: Run test
+          command: |
+            bash src/test.sh
+
+  build-hello:
+    docker:
+      - image: cimg/base:2022.03
+    steps:
+      - checkout
+      - run:
+          name: Run Hello test
+          command: |
+            bash src/test_hello.sh
+
+workflows:
+  build-workflow:
+    jobs:
+      - notify
+      - test
+      - request-build:
+          type: approval
+          requires:
+            - test
+      - build-hello:
+          requires:
+            - request-build
