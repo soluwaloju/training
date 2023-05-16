@@ -1,38 +1,11 @@
 version: 2.1
 
-executors:
-  my-executor:
-    docker:
-      - image: buildpack-deps:jessie
-        auth:
-          username: mydockerhub-user
-          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
-
-jobs:
-  flow:
-    executor: my-executor
-    steps:
-      - run: mkdir -p workspace
-      - run: echo "Hello, world!" > workspace/echo-output
-
-  downstream:
-    executor: my-executor
-    steps:
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: /workspace
-
-      - run: |
-          if [[ `cat /tmp/echo-output` == "Hello, world!" ]]; then
-            echo "It worked!";
-          else
-            echo "Nope!"; exit 1
-          fi
+orbs:
+  doctl: digitalocean/cli@1.0.0
 
 workflows:
-  btd:
+  install_and_configure_cli:
     jobs:
-      - flow
-      - downstream:
-          requires:
-            - flow
+      - doctl/install_and_initialize_cli:
+          context: myContext
+          executor: doctl/default
