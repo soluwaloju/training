@@ -1,11 +1,18 @@
-version: 2.1
-
+version: '2.1'
 orbs:
-  doctl: digitalocean/cli@1.0.0
-
-workflows:
-  install_and_configure_cli:
-    jobs:
-      - doctl/install_and_initialize_cli:
-          context: myContext
-          executor: doctl/default
+  snyk: snyk/snyk@1.5.0
+jobs:
+  build:
+    docker:
+      - image: cimg/node:lts
+    steps:
+      - checkout
+      - run: npm ci
+      - snyk/install
+      - run:
+          command: snyk version
+          name: Which version of snyk is installed
+      - run:
+          command: snyk code test
+          name: Run code scan
+workflows: null
