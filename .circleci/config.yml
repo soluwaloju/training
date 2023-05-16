@@ -11,7 +11,7 @@ jobs:
       - snyk/install
       - run:
           command: snyk version
-          name: Which version of snyk is installed
+          name: Which versionof snyk is installed
       - run:
           command: snyk code test
           name: Run code scan
