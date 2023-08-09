@@ -1,0 +1,18 @@
+version: '2.1'
+jobs:
+  test:
+    docker:
+      - image: cimg/go:1.19.2
+      - image: cimg/postgres:13.4
+      - image: circleci/redis:6.0-alpine3.15
+    resource_class: xlarge
+    parallelism: 4
+    environment: # environment variables for the build itself
+      TEST_RESULTS: /tmp/test-results # path to where test results will be saved
+    steps:
+      - run: sudo apt update
+
+workflows:
+  build-workflow:
+      jobs:
+      - test    
